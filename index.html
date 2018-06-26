@@ -1,0 +1,476 @@
+<!DOCTYPE>
+<html>
+
+<head>
+    <title>MaxusTech</title>
+    <!-- <link rel="stylesheet" href="/vendor/bootstrap/dist/css/bootstrap.css"> -->
+    <!-- <link rel="stylesheet" href="/css/style.css"> -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, minimum-mag=1.0, maximum-mag=1.0">
+    <style>
+        body {
+            background-color: #000000;
+            margin: 0px;
+            overflow: hidden;
+        }
+
+        a {
+            color:#0078ff;
+        }
+    </style>
+</head>
+
+<body style="margin: 0">
+    <!-- <img id="splash" src="img/splash.png"  alt="welle" style="height:100%;width:100%;z-index: 0"/> -->
+    <!-- Thrid Party Library (TPL) -->
+    <!-- TPL: Jquery -->
+    <script src="/vendor/jquery/dist/jquery.js"></script>
+    <!-- TPL: bootstarp -->
+<!--     <script src="/vendor/bootstrap/dist/js/bootstrap.js"></script>
+ -->
+    <!-- TPL: p5.js -->
+    <script src="/js/lib/p5/p5.js"></script>
+    <script src="/js/lib/p5/p5.dom.js"></script>
+    <script src="/js/lib/p5/p5.sound.js"></script>
+    <!-- TPL: Socket.io -->
+    <script src="/socket.io/socket.io.js"></script>
+    <!-- App Core Module-->
+    <script src="/js/init.js"> </script>
+
+    <script src="/js/three.min.js"></script>
+
+    <script src="/js/Projector.js"></script>
+    <!-- <script src="/js/CanvasRenderer.js"></script> -->
+
+    <script src="/js/stats.min.js"></script>
+
+    <script>
+
+        var text2 = document.createElement('div');
+        text2.style.position = 'absolute';
+        text2.style.width = '50%';
+        text2.style.height = 20;
+        text2.style.backgroundColor = "black";
+        text2.style.fontFamily = 'Courier';
+        text2.style.color = '#7a9dff';
+        text2.style.fontSize = 63;
+        text2.style.textAlign = 'center';
+        text2.innerHTML = "Turn Any Surface into Smart Interface";
+        text2.style.top = '5%';
+        text2.style.left = '25%';
+        document.body.appendChild(text2);
+
+        var SEPARATION = 20, AMOUNTX = 50, AMOUNTY = 50;
+
+        var container, stats;
+        var camera, scene, renderer;
+
+        var particles, particle, count = 0;
+
+        var mouseX = 0, mouseY = 0, mouseDown = false;
+
+        var WaveX = 1000, WaveY = 1000;
+
+        var windowHalfX = window.innerWidth / 2;
+        var windowHalfY = window.innerHeight / 2;
+
+        init();
+        animate();
+
+        function init() {
+
+            container = document.createElement( 'div' );
+            document.body.appendChild( container );
+
+            // Set camera & Scene
+            camera = new THREE.PerspectiveCamera( 40, window.innerWidth / window.innerHeight, 1, 10000 );
+            camera.position.set( 0, 500, 1300 );
+
+            scene = new THREE.Scene();
+
+
+            // Create Particle 
+            particles = new Array();
+
+            var PI2 = Math.PI * 2;
+
+            // function generateTexture() {
+
+            //     var canvas = document.createElement( 'canvas' );
+            //     canvas.width = window.innerWidth;
+            //     canvas.height = window.innerHeight;
+
+            //     var context = canvas.getContext( '2d' );
+
+            //     context.beginPath();
+            //     context.arc( 0, 0, 10, 0, PI2, true );
+            //     context.fillStyle = 'green';
+            //     context.fill();
+
+            //     return canvas;
+
+            // }
+
+
+            // var texture = new THREE.Texture( generateTexture() );
+            // texture.needsUpdate = true; // important!
+
+            // var material = new THREE.SpriteMaterial( { map: texture } );
+
+            // material_particle = new THREE.Sprite( material );
+
+            var spriteMap = new THREE.TextureLoader().load( '/img/sphere.png' );
+            var material_particle = new THREE.SpriteMaterial( {
+
+                color: 0x5f93d5,
+                // color: 0xffffff,
+
+                map : spriteMap
+                // program: function ( context ) {
+
+                //     context.beginPath();
+                //     context.arc( 0, 0, 100, 0, PI2, true );
+                //     context.fill();
+
+                // }
+
+            } );
+
+            var i = 0;
+
+            for ( var ix = 0; ix < AMOUNTX; ix ++ ) {
+
+                for ( var iy = 0; iy < AMOUNTY; iy ++ ) {
+
+                    particle = particles[ i ++ ] = new THREE.Sprite( material_particle );
+                    particle.scale.set(10, 10, 1)
+                    particle.position.x = ix * SEPARATION - ( ( AMOUNTX * SEPARATION ) / 2 );
+                    particle.position.z = iy * SEPARATION - ( ( AMOUNTY * SEPARATION ) / 2 );
+                    particle.position.y = 100;
+                    particle.mag = 1.1;
+                    scene.add( particle );
+
+                }
+
+            }
+
+            // Grid
+
+            var size = 500, step = 100;
+
+            var geometry = new THREE.Geometry();
+
+            for ( var i = - size; i <= size; i += step ) {
+
+                geometry.vertices.push( new THREE.Vector3( - size, 0, i ) );
+                geometry.vertices.push( new THREE.Vector3(   size, 0, i ) );
+
+                geometry.vertices.push( new THREE.Vector3( i, 0, - size ) );
+                geometry.vertices.push( new THREE.Vector3( i, 0,   size ) );
+
+            }
+
+            var material_line = new THREE.LineBasicMaterial( { color: 0xcbdcf1, linewidth: 1, opacity: 0.5 } );
+
+            var line = new THREE.LineSegments( geometry, material_line );
+            scene.add( line );
+
+            // var light = new THREE.AmbientLight( 0x404040 ); // soft white light
+            // scene.add( light );
+
+            renderer = new THREE.WebGLRenderer();
+            renderer.setPixelRatio( window.devicePixelRatio );
+            renderer.setSize( window.innerWidth, window.innerHeight );
+            container.appendChild( renderer.domElement );
+
+            stats = new Stats();
+            container.appendChild( stats.dom );
+
+            document.addEventListener( 'touchmove', onDocumentTouchMove, false );
+            document.addEventListener( 'touchend', function(){
+                WaveX = 1000;
+                WaveY = 1000;
+            }, false );
+
+            window.addEventListener( 'resize', onWindowResize, false );
+
+            document.addEventListener( 'mousemove', onDocumentMouseMove, false );
+            document.addEventListener( 'mousedown', onDocumentMouseDown, false );
+            document.addEventListener( 'mouseup', onDocumentMouseUp, false );
+
+
+        }
+
+        function onWindowResize() {
+
+            windowHalfX = window.innerWidth / 2;
+            windowHalfY = window.innerHeight / 2;
+
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+
+            renderer.setSize( window.innerWidth, window.innerHeight );
+
+        }
+
+        function onDocumentMouseMove(event){
+            event.preventDefault();
+            if(mouseDown){
+                WaveX = event.clientX - windowHalfX;
+                WaveY = event.clientY - windowHalfY;
+            }
+        }
+
+        function onDocumentMouseDown(event){
+            event.preventDefault();
+            mouseDown = true;
+        }
+
+        function onDocumentMouseUp(event){
+            mouseDown = false;
+            WaveX = 1000;
+            WaveY = 1000;
+            event.preventDefault();
+        }
+
+        function onDocumentTouchMove( event ) {
+
+            WaveX = event.touches[ 0 ].pageX - windowHalfX;
+            WaveY = event.touches[ 0 ].pageY - windowHalfY;
+
+        }
+
+        //
+
+        function gaussian(amplitude, x0, y0, sigmaX, sigmaY, x, y) {
+            var exponent = -((Math.pow(x - x0, 2)/(2*Math.pow(sigmaX, 2))) + (Math.pow(y - y0, 2)/(2*Math.pow(sigmaY, 2))));
+
+            return amplitude * Math.pow(Math.E, exponent);
+        }
+
+
+        function animate() {
+
+            setTimeout( function() {
+
+                requestAnimationFrame( animate );
+
+            }, 1000 / 30 );
+
+            render();
+
+            // requestAnimationFrame( animate );
+
+            // render();
+            stats.update();
+
+        }
+
+        function render() {
+
+            camera.lookAt(new THREE.Vector3());
+
+
+            /*************************************
+            * Your code here to update the scene *
+            *************************************/
+             
+            var pos_x = Math.round((WaveX + ( ( AMOUNTY * SEPARATION ) / 2 )) / SEPARATION);
+            var pos_y = Math.round((WaveY + ( ( AMOUNTY * SEPARATION ) / 2 )) / SEPARATION);
+
+            // var pos_x = mouseX;
+            // var pos_y = mouseY;
+            // console.log(pos_x, pos_y)
+            var i = 0;
+
+            for ( var ix = 0; ix < AMOUNTX; ix ++ ) {
+
+                for ( var iy = 0; iy < AMOUNTY; iy ++ ) {
+
+                    particle = particles[ i++ ];
+
+                    particle.cap = gaussian(250, pos_x, pos_y, 4, 4, ix, iy);
+
+                    particle.position.y -= 50;
+
+                    if(particle.position.y < particle.cap){
+                        particle.position.y += (particle.cap - particle.position.y)*0.3 ;
+                        if(particle.position.y >= particle.cap){
+                            particle.position.y = particle.cap;
+                        }
+                    }
+                    else if(particle.position.y > particle.cap){
+                        particle.position.y *= 0.9;
+                    }
+
+                    particle.position.y += 50;
+
+                    // particle.position.y = gaussian(particle.mag, pos_x, pos_y, 6, 6, ix, iy) + 50;
+                    // particle.position.y = particle.mag + 50;
+
+
+                }
+
+            }
+
+            renderer.render( scene, camera );
+
+        }
+
+        var dataRecieveTimeoutTask = null;
+
+        socket.on("s", function(d) {
+            // console.log(d)
+            if (d.data_type == 'position_filtered') {
+                    // console.log(d.data)
+                    clearDataRecieveTimeoutTask();
+                    setDataRecieveTimeoutTask();
+                    WaveX = d.data[0] * (document.body.clientWidth / 400);
+                    WaveY = -d.data[1] * (document.body.clientHeight / 220) - 0.86*document.body.clientHeight;
+                    // console.log(mouseX, mouseY);
+                } else if (d.data_type == 'envelope') {
+                    // pushChannelSignalData(d.data);
+                    myp5.pushChannelSignalData(d.data);
+                }
+        });
+
+        function clearDataRecieveTimeoutTask(){
+            if(dataRecieveTimeoutTask){
+                clearTimeout(dataRecieveTimeoutTask);
+                dataRecieveTimeoutTask = null;
+            }
+        }
+
+        function setDataRecieveTimeoutTask(){
+            if(!dataRecieveTimeoutTask){
+                dataRecieveTimeoutTask = setTimeout(function(){
+                    dataRecieveTimeoutTask = null;
+                    WaveX = 1000;
+                    WaveY = 1000;
+                }, 200);
+            }
+        }
+        // socket.on("status", function(data) {
+        //     console.log('Status:', data);
+        //     if (!data.success) {
+        //         console.error(
+        //             'Device:',
+        //             data.device,
+        //             '\nMessage:',
+        //             data.message,
+        //             '\nError:',
+        //             JSON.stringify(data.error));
+        //         var audio = new Audio('/audio/gesture-end.ogg');
+        //         audio.play();
+        //     } else {
+        //         switch (data.message) {
+        //             case 'Gesture Start':
+        //                 // setLEDFastBlink();
+        //                 paths = [];
+        //                 console.log(data.message);
+        //                 var audio = new Audio('/audio/gesture-start.ogg');
+        //                 audio.play();
+        //                 break;
+        //             case 'Gesture End':
+        //                 // setLEDOn();
+        //                 console.log(data.message);
+        //                 var audio = new Audio('/audio/gesture-end.ogg');
+        //                 audio.play();
+        //                 break;
+        //             default:
+        //                 console.log(data);
+        //                 break;
+        //         }
+        //     }
+        // });
+
+        var s = function(sketch){
+            var ch1Data = new Array(600);
+            var ch2Data = new Array(600);
+
+            sketch.returnChannelData = function(index){
+                if(index == 1){
+                    return ch1Data;
+                }
+                else if(index == 2){
+                    return ch2Data;
+                }
+            }
+            sketch.pushChannelSignalData = function(data) {
+                ch1Data = data.slice(0, data.length / 2);
+                ch2Data = data.slice(data.length / 2, data.length);
+            }
+
+            sketch.drawWaveform = function(width, height) {
+                sketch.drawPlot(ch1Data, height * 0.25, sketch.color(77, 193, 205), width, height);
+                sketch.drawPlot(ch2Data, height * 0.75, sketch.color(129, 140, 247), width, height);
+
+                this.displayText("CH1", width * 0.06, height * 0.25, width * 0.05, sketch.color(255, 255, 248), 'ARIAL', this.CENTER, this.CENTER);
+                this.displayText("CH2", width * 0.06, height * 0.75, width * 0.05, sketch.color(255, 255, 248), 'ARIAL', this.CENTER, this.CENTER);
+            }
+
+            sketch.drawPlot = function(plot, plotCenter, color, width, height) {
+                var plotWidth = width * 0.8;
+                var plotHeight = height * 0.5;
+
+                var ratio = plotWidth / (plot.length - 50) * 4;
+                var magnitude = 4000;
+                var shift = width * 0.1;
+
+                this.rectMode(this.CENTER);
+                this.fill(39, 44, 52);
+                this.noStroke();
+                this.rect(plotWidth/2 + shift, plotCenter, plotWidth, plotHeight);
+
+                var x = 0;
+
+                this.stroke(color);
+                this.strokeWeight(2);
+                for (var i = 0; i < plot.length - 51; i+=4) {
+                    var yp = -this.calcY(plot[this.int(i + 4)], plotHeight, magnitude) + plotCenter;
+                    var yc = -this.calcY(plot[this.int(i)], plotHeight, magnitude) + plotCenter;
+                    this.line(x + ratio + shift, yp, x + shift, yc);
+                    x += ratio;
+                }
+            }
+
+            sketch.calcY = function(i, plotHeight, magnitude){
+                return (i * plotHeight) / magnitude;
+            }
+
+            sketch.setup = function(){
+                var canvas = sketch.createCanvas(200, 100);
+                canvas.style('z-index', '')
+                canvas.position(0, document.body.clientHeight - 100);
+            };
+
+            sketch.draw = function(){
+                sketch.background(39, 44, 52);
+                sketch.drawWaveform(sketch.width, sketch.height);
+            }; 
+
+            sketch.touchStarted = function(){
+                // console.log(sketch.touchX, sketch.touchY)
+                if(sketch.mouseX > 0 && sketch.mouseX < sketch.width && sketch.mouseY >  0 && sketch.mouseY < sketch.height){
+                    console.log('touch', sketch.mouseX, sketch.mouseY);
+                    systemRecalibrate();
+                }
+            };
+
+            sketch.displayText = function(content, x, y, size, color, font, verticalAlign, horizontalAlign) {
+                this.fill(color);
+                this.noStroke();
+                this.textFont("ARIAL");
+                this.textStyle(this.NORMAL);
+                this.textSize(size);
+                this.textAlign(verticalAlign, horizontalAlign);
+                this.text(content, x, y);
+            }
+        };
+
+        var myp5 = new p5(s);
+
+    </script>
+</body>
+
+</html>

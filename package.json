@@ -1,0 +1,35 @@
+{
+  "name": "welle_data_visualization",
+  "main": "index.html",
+  "node-main": "index.js",
+  "window": {
+    "title": "MaxusTech",
+    "position": "center",
+    "fullscreen": true,
+    "resizable": true,
+    "toolbar": true,
+    "frame": true,
+    "width": 800,
+    "height": 600,
+    "always_on_top": true,
+    "visible_on_all_workspaces": true
+  },
+  "webkit": {
+    "plugin": true
+  },
+  "description": "--- >Author: Tom Zheng >Date: 21/11/2016",
+  "version": "1.0.0",
+  "dependencies": {
+    "debug": "^2.6.3",
+    "express": "^4.14.0",
+    "number-is-nan": "^1.0.1",
+    "serialport": "^4.0.7",
+    "socket.io": "^1.5.1"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Tom Zheng",
+  "license": "ISC"
+}

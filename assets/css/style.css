@@ -1,0 +1,267 @@
+#welle_attr {
+    padding: 10 0 10 20;
+}
+
+body {
+    background: #000000;
+    color: #ffffff;
+    height: 100%;
+    width: 100%;
+}
+
+*[onclick] {
+    cursor: pointer;
+}
+
+.col-xs-1,
+.col-sm-1,
+.col-md-1,
+.col-lg-1,
+.col-xs-2,
+.col-sm-2,
+.col-md-2,
+.col-lg-2,
+.col-xs-3,
+.col-sm-3,
+.col-md-3,
+.col-lg-3,
+.col-xs-4,
+.col-sm-4,
+.col-md-4,
+.col-lg-4,
+.col-xs-5,
+.col-sm-5,
+.col-md-5,
+.col-lg-5,
+.col-xs-6,
+.col-sm-6,
+.col-md-6,
+.col-lg-6,
+.col-xs-7,
+.col-sm-7,
+.col-md-7,
+.col-lg-7,
+.col-xs-8,
+.col-sm-8,
+.col-md-8,
+.col-lg-8,
+.col-xs-9,
+.col-sm-9,
+.col-md-9,
+.col-lg-9,
+.col-xs-10,
+.col-sm-10,
+.col-md-10,
+.col-lg-10,
+.col-xs-11,
+.col-sm-11,
+.col-md-11,
+.col-lg-11,
+.col-xs-12,
+.col-sm-12,
+.col-md-12,
+.col-lg-12 {
+    /*border: 1px white solid;*/
+    height: 100%;
+    padding: 0;
+}
+
+#debug {
+    padding: 20px 100px;
+    z-index: 998;
+    position: absolute;
+    color: #ffffff;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+}
+
+#debug-close,
+#debug-open {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    padding: 10px 15px;
+    color: #ffffff;
+    background: rgba(0, 0, 0, 0.3);
+}
+
+#tutorial-controllee-img {
+    position: absolute;
+    top: 30px;
+    max-height: 45%;
+}
+
+#tutorial-img {
+    position: absolute;
+    bottom: 30px;
+    max-height: 45%;
+}
+
+#tutorial li {
+    transition: background 0.3s;
+}
+
+#tutorial li.selected {
+    background: rgba(32, 94, 125, 0.7);
+}
+
+.icon {
+    width: 30%;
+    border: 1px white solid;
+    height: 100%;
+}
+
+.icons {
+    width: 30%;
+}
+
+.icons .icon {
+    width: 100%;
+}
+
+.icon img {
+    max-width: 65%;
+    max-height: 100%;
+}
+
+.list-inline>li {
+    margin-bottom: 10px;
+}
+
+.indicator {
+    width: 70%;
+    border: 1px white solid;
+    height: 100%;
+}
+
+.flex {
+    display: -webkit-box;
+    display: -moz-box;
+    display: -ms-flexbox;
+    display: -webkit-flex;
+    display: flex;
+    -webkit-align-items: center;
+    align-items: center;
+    -webkit-justify-content: center;
+    justify-content: center;
+}
+
+
+/* POP-UP */
+
+#pop-up {
+    /*POSITIONING*/
+    position: absolute;
+    bottom: 10%;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 997;
+    /*STYLING*/
+    height: 180px;
+    width: 180px;
+    background: rgba(256, 256, 256, 0.6);
+    border-radius: 15px;
+    padding: 20px;
+    /*TEXTING*/
+    text-align: center;
+}
+
+#pop-up.animate {
+    transition: opacity 0.3s;
+}
+
+#pop-up.animate.on {
+    opacity: 1;
+    /*ANIMATION*/
+    /*-webkit-animation: pop-up-on 0.4s;*/
+    /* Safari 4+ */
+    /*-moz-animation: pop-up-on 0.4s;*/
+    /* Fx 5+ */
+    /*-o-animation: pop-up-on 0.4s;*/
+    /* Opera 12+ */
+    /*animation: pop-up-on 0.4s;*/
+    /* IE 10+, Fx 29+ */
+}
+
+#pop-up.animate.off {
+    opacity: 0;
+    /*ANIMATION*/
+    /*-webkit-animation: pop-up-off 0.4s;*/
+    /* Safari 4+ */
+    /*-moz-animation: pop-up-off 0.4s;*/
+    /* Fx 5+ */
+    /*-o-animation: pop-up-off 0.4s;*/
+    /* Opera 12+ */
+    /*animation: pop-up-off 0.4s;*/
+    /* IE 10+, Fx 29+ */
+}
+
+#pop-up #pop-up-icon {
+    display: block;
+    margin-right: auto;
+    margin-left: auto;
+    max-width: 100%;
+    height: auto;
+    width: 110px;
+}
+
+#pop-up #pop-up-text {
+    color: white;
+    font-size: 16px;
+    overflow: hidden;
+    margin-top: 10px;
+}
+
+@keyframes pop-up-on {
+    0% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+
+@keyframes pop-up-off {
+    0% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 0;
+    }
+}
+
+
+/* for mobile and tablet */
+
+@media (max-width: 768px) {
+    .icon {
+        width: 100%;
+    }
+    .icons {
+        width: 100%;
+    }
+    #gesture {
+        height: 20%;
+    }
+    #control {
+        height: 20%;
+    }
+    #tutorial {
+        height: 60%;
+    }
+}
+
+@media (min-width: 768px) {
+    #gesture {
+        height: 20%;
+    }
+    #control {
+        height: 20%;
+    }
+    #tutorial {
+        height: 60%;
+    }
+}
