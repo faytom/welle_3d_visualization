@@ -30,9 +30,11 @@ serialread.prototype.getSerialPort = function(){
             var port = ports[i];
             var portManufacturer = port.manufacturer;
             var portName = port.comName;
+            var vendorId = port.vendorId;
+            var productId = port.productId;
             // console.log(JSON.stringify(port))
-            // TODO: Add Window version of ST USB Identifier
-            if ((portName.indexOf("usbmodem") >= 0 && portManufacturer.indexOf("STMicroelectronics") >= 0 )) {
+            if (portManufacturer && (portManufacturer.indexOf("STMicroelectronics") >= 0 
+                || vendorId.indexOf('0483') >= 0 && productId.indexOf('5740') >= 0)) {
                 var myPort = new serialport(portName, {
                     baudrate: 230400 * 2,
                     buffersize: 4096 * 10
