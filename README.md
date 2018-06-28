@@ -1,5 +1,11 @@
 ### Welle 3D Visualization
 
+#### Node
+**Windows 10/ Windows 7**
+- Node version requires v8.11.2 or above
+
+**Mac**
+- Node version requires v7.4.0 or above
 #### Setup
 
 - Run `npm install` under project directory to install node modules dependencies
