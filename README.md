@@ -2,7 +2,7 @@
 
 #### Node
 **Windows 10/ Windows 7**
-- Node version requires v8.11.2 or above
+- Node version requires v8.11.2
 
 **Mac**
 - Node version requires v7.4.0 or above
